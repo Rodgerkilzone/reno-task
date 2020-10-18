@@ -12,7 +12,7 @@ import { Container } from "reactstrap";
 
 //Import Breadcrumb
 // import Breadcrumbs from '../../components/Common/Breadcrumb';
-import FlowBuilder from './FlowBuilder'
+import TaskCreator from './TaskCreator'
 import {  useAuth0} from "@auth0/auth0-react";
 import { Redirect } from 'react-router-dom';
 // import logodark from '../../assets/images/Platform.png';
@@ -55,7 +55,7 @@ const StarterPage = (props) => {
     // backgroundRepeat:" no-repeat",
     // backgroundSize: "cover"       
                 }}>
-                    <FlowBuilder token={localStorage.getItem("token")} logout={()=>{
+                    <TaskCreator token={localStorage.getItem("token")} logout={()=>{
                         
                         // logout();
                         // props.history.push('/login')

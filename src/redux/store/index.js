@@ -9,7 +9,7 @@ const persistConfig = {
     key: 'root',
     storage: storage,
     whitelist: [
-        'token', 'user', 'authStatus', 'events', 'business', 'receipts', 'payments',
+        'token', 'user', 'authStatus', 'events', 'project', 'receipts', 'payments',
     ],
     blacklist: [
         'sidebarShow'

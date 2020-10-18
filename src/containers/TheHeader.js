@@ -12,7 +12,7 @@ import {
   CLink
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-
+import { addSideBar } from '../redux/action/addSideBar';
 // routes config
 import routes from '../routes'
 
@@ -29,12 +29,12 @@ const TheHeader = () => {
 
   const toggleSidebar = () => {
     const val = [true, 'responsive'].includes(sidebarShow) ? false : 'responsive'
-    dispatch({type: 'set', sidebarShow: val})
+    dispatch(addSideBar(val))
   }
 
   const toggleSidebarMobile = () => {
     const val = [false, 'responsive'].includes(sidebarShow) ? true : 'responsive'
-    dispatch({type: 'set', sidebarShow: val})
+    dispatch(addSideBar(val))
   }
 
   return (

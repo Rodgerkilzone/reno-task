@@ -9,6 +9,8 @@
 /* eslint-disable no-loop-func */
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
+import { useSelector, useDispatch } from 'react-redux'
+import { addProject } from '../../redux/action/addProject';
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { Input, MenuItem, Select, Typography, Chip, Slider, Switch, Divider, Avatar } from '@material-ui/core';
 // fake data generator
@@ -16,7 +18,9 @@ const getItems = (count, offset = 0) =>
     Array.from({ length: count }, (v, k) => k).map(k => ({
         id: `item-${k + offset}-${new Date().getTime()}`,
         content: `item ${k + offset}`
-    }));
+    })
+    
+    );
 
 const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
@@ -63,20 +67,71 @@ const getItemStyle = (isDragging, draggableStyle) => ({
     ...draggableStyle
 });
 const getListStyle = isDraggingOver => ({
-    background: isDraggingOver ? "lightblue" : "lightgrey",
+    background: isDraggingOver ? "rgba(170, 212, 225,0.4)" : "rgba(211, 211, 211,0.4)",
     padding: grid,
-    // width: 250,
+    flex: 1,
+    minWidth:'19vw',
     overflow:'scroll',
-    height:'75vh'
+    height:'75vh',
+    paddingBottom:50,
+    margin:4,
 });
 
 function QuoteApp() {
-    const [state, setState] = useState([getItems(10), getItems(5, 10)]);
 
+    const [project, setProject] = useState(useSelector(state => state.project))
+  var a=[{empty:true}]
+    for (let index = 0; index < project.form_1.length; index++) {
+     
+        if (project.form_1[index].progress==0){
+            project.form_1[index]['id'] = index
+             a.push(project.form_1[index])
+        }   
+  }
+    var b = [{ empty: true }]
+    for (let index = 0; index < project.form_1.length; index++) {
+
+        if (project.form_1[index].progress == 1) {
+            project.form_1[index]['id'] = index
+            b.push(project.form_1[index])
+        }
+    }
+    var c = [{ empty: true }]
+    for (let index = 0; index < project.form_1.length; index++) {
+
+        if (project.form_1[index].progress == 2) {
+            project.form_1[index]['id'] = index
+            c.push(project.form_1[index])
+        }
+    }
+    
+    var d = [{ empty: true }]
+ 
+    for (let index = 0; index < project.form_1.length; index++) {
+
+        if (project.form_1[index].progress == 3) {
+            project.form_1[index]['id'] = index
+            d.push(project.form_1[index])
+        }
+    }
+    
+
+    const [state, setState] = useState([a,b,c,d] );
+// setState([project.form_1]);
+    console.log(state)
     function onDragEnd(result) {
         const { source, destination } = result;
 
         // dropped outside the list
+//         var c = state[destination.droppableId];
+//         for (let index = 0; index <c.length; index++) {
+//             // if (c[index]['name'] + '-' + c[index]['id']==result.droppableId){
+//             console.log(c[index]['name'] + '-' + c[index]['id'])
+// //   }
+    
+// }
+    
+// var h=
         if (!destination) {
             return;
         }
@@ -99,8 +154,8 @@ function QuoteApp() {
     }
 
     return (
-        <div>
-            <button
+        <div style={{ width: '100%',}}>
+            {/* <button
                 type="button"
                 onClick={() => {
                     setState([...state, []]);
@@ -115,18 +170,18 @@ function QuoteApp() {
                 }}
             >
                 Add new item
-      </button>
-            <div style={{ display: "flex" }}>
+      </button> */}
+            <div style={{ display: "flex",}}>
                 <DragDropContext onDragEnd={onDragEnd}>
                     {state.map((el, ind) => {
                         var color = ''
                         var title = ''
                         if (ind == 0) {
-                            title = 'Backlog'
-                            color = 'red'
+                            title = 'No Status'
+                            color = 'gray'
                         } else if (ind == 1) {
                             title = 'Inprogress'
-                            color = 'purple'
+                            color = '#0039cb'
                         } else if (ind == 2) {
                             title = 'Review'
                             color = 'orange'
@@ -144,29 +199,43 @@ function QuoteApp() {
                                         variant="body1"
                                     >{title}</Typography>
                             </div>
-                        <Droppable key={ind} droppableId={`${ind}`}>
+                                <Droppable key={ind} droppableId={`${ind}`} className='hidebar'>
                             {(provided, snapshot) => (
                                 <div
                                     ref={provided.innerRef}
                                     style={getListStyle(snapshot.isDraggingOver)}
                                     {...provided.droppableProps}
+                                            className='hidebar'
                                 >
                                     {el.map((item, index) => {
                                         var border=''
                                         if (ind == 0){
                                             border = '4px solid red'
                                         } else if (ind == 1){
-                                            border = '4px solid purple'
+                                            border = '4px solid #0039cb'
                                         } else if (ind == 2){
                                             border = '4px solid orange'
                                         }else{
                                             border = '4px solid green'
                                         }
+                                        var progress=''
+                                        if(item.progress==0){
+                                            progress='No status'
+                                        } else if (item.progress == 1){
+                                            progress = 'In Progress'
+                                        } else if (item.progress == 2) {
+                                            progress = 'Review'
+                                        } else  {
+                                            progress = 'Complete'
+                                        }
+                                        if (item.empty== true){
+                                            return(<div></div>)
+                                        }else{
                                         return(
                                     
                                         <Draggable
-                                            key={item.id}
-                                            draggableId={item.id}
+                                                key={item.name+'-'+item.id}
+                                                draggableId={item.name + '-' + item.id}
                                             index={index}
                                         >
                                        
@@ -179,7 +248,7 @@ function QuoteApp() {
                                                         snapshot.isDragging,
                                                         provided.draggableProps.style
                                                     )}
-                                                    style={{ borderTop:border, background: 'white', padding: 8, margin: 4, boxShadow: '0 2px 5px 0 rgba(0,0,0,.16), 0 2px 5px 0 rgba(0,0,0,.23)', minWidth: '18vw', ...provided.draggableProps.style}}
+                                                    style={{ borderLeft:border, background: 'white', padding: 8, margin: 4, boxShadow: '0 2px 5px 0 rgba(0,0,0,.16), 0 2px 5px 0 rgba(0,0,0,.23)', minWidth: '18vw', ...provided.draggableProps.style}}
                                                 >
 
 
@@ -194,9 +263,9 @@ function QuoteApp() {
                                                         <Typography
 
                                                             color="white"
-                                                            style={{ fontSize: '18x', margin: 0 }}
+                                                                style={{ fontSize: '18x', margin: 0, color:'#303C54',fontWeight:'bold' }}
                                                             variant="body1"
-                                                        >     Marketing Strategy</Typography>
+                                                        >    {item.name}</Typography>
                                                          <div style={{ display: 'flex', flexDirection: 'row', marginTop: 10, alignItems: 'center' }}>
                                                             <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg"  style={{ height: 28, width: 28, margin: 3}} />
                                                             <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg"  style={{ height: 28, width: 28, margin: 3 }}  />
@@ -215,9 +284,9 @@ function QuoteApp() {
                                                             <Typography
 
                                                                 color="gray"
-                                                                style={{ fontSize: '14x', margin: 0, color:'gray'}}
+                                                                style={{ fontSize: '12x', margin: 0, color:color}}
                                                                 variant="body1"
-                                                            > Inprogress</Typography>
+                                                                > {title}</Typography>
 </div>
                                                         {/* <button
                                                             type="button"
@@ -235,7 +304,7 @@ function QuoteApp() {
                                                 </div>
                                             )}
                                         </Draggable>
-                                    )})}
+                                    )}})}
                                     {provided.placeholder}
                                 </div>
                             )}

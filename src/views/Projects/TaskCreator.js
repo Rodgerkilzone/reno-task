@@ -7,6 +7,7 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-loop-func */
+import { withRouter } from 'react-router-dom';
 import React, { Component } from 'react';
 import { Input, MenuItem, Select, Typography, Chip, Slider, Switch  } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
@@ -21,6 +22,7 @@ import BorderColorIcon from '@material-ui/icons/BorderColor';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { Route } from 'react-router-dom';
 import Draggable, { DraggableCore } from 'react-draggable';
+import { addProject } from '../../redux/action/addProject';
 // import TweenOne from 'rc-tween-one';
 // import { Alert } from 'react-bootstrap';
 import Avatar from '@material-ui/core/Avatar';
@@ -63,7 +65,7 @@ class App extends Component {
       exit: true,
     }
     this.state = {
-      menu: false, checkedB: false, settings: false, addProject: false, modalDrag:false,
+      menu: false, checkedB: false, settings: false, addProject: false, modalDrag:false,mode:'tasktree',
       showError: false, errorMsg: '', xPos: 0,
       yPos: 0,flow_code_2:'',step_1_err:false,flow_type:'', flow_desc: '',flow_name:'',addflow:false, search: '', results: true, sender: {}, selected: '', card_view: false, sidePane: false, drag: false,
       first_object: {
@@ -84,446 +86,10 @@ class App extends Component {
       }, form_1: [], lead: [1], loading: false, order_count: [], error: '', codes: [],itms:[1,1,1,1,1,1,1,1,,1,3,11,]
     }
   }
-  
-  ecov = (load) => {
-
-    try{
-    var payload = load.screens;
-    var sn=load.serviceCode;
-      this.setState({ flow_name:load.name})
-      this.setState({ flow_desc: load.description })
-//  console.log(JSON.stringify(payload));
-
-    var g = [];
-    var form_1 = [];
-    for (var f = 0; Object.getOwnPropertyNames(payload).length > f; f++) {
-      // //////console.log(Object.getOwnPropertyNames(payload)[f])
-      if (payload[Object.getOwnPropertyNames(payload)[f]].Type==="external"){
-        payload[Object.getOwnPropertyNames(payload)[f]].Type='raw_input';
-      }
-      if (Object.getOwnPropertyNames(payload)[f] !== 'start_page') {
-        g = this.state.form_1;
-        var t = [];
-        t = payload[Object.getOwnPropertyNames(payload)[f]].Items;
-        if (typeof t === 'undefined') {
-          t = [];
-        }
-        for (var i = 0; t.length > i; i++) {
-          var array = Object.getOwnPropertyNames(payload);
-          var array4 = array.filter(item => item !== 'start_page');
-          var p = null;
-          for (var n = 0; n < array4.length; n++) {
-            if (array4[n] === t[i].nextScreen) {
-
-              p = n;
-
-            }
-          }
-          // if(payload)[f].Type==='')
-          if(p===null){
-            p=0;
-          }
-          t[i] = { field: t[i].displayText, screen: t[i].nextScreen, id: p }
-        }
-        console.log(JSON.stringify(payload))
-        Object.getOwnPropertyNames(payload).map(item => {
-          var t2 = payload[item].Next;
-          // console.log(payload[item].Next);
-          // console.log('hello')
-          if (t2 !== '' && typeof t2 !== 'undefined' && t2 !== 'end' ) {
-            // //////console.log(t2)
-            var array2 = Object.getOwnPropertyNames(payload);
-            var pp2 = array2.filter(item => item !== 'start_page');
-            var p2 = null;
-            for (var n2 = 0; n2 < pp2.length; n2++) {
-              if (pp2[n2] === t2) {
-
-                p2 = n2;
-
-              }
-
-            }
-          
-
-          }
-        })
-
-
-
-        var h = [];
-        if (typeof payload[Object.getOwnPropertyNames(payload)[f]].Options === 'undefined') {
-          payload[Object.getOwnPropertyNames(payload)[f]].Options = []
-        }
-        payload[Object.getOwnPropertyNames(payload)[f]].Options.map((item, i) => { h.push(item); });
-      // setInterval(function name() {
-
-      //   console.log(payload[Object.getOwnPropertyNames(payload)[f]]);
-      // },3000)
-    
-        if (payload[Object.getOwnPropertyNames(payload)[f]].Type === 'raw_input' || payload[Object.getOwnPropertyNames(payload)[f]].Type === 'external') {
-          var y = 'direct_input'
-        } else {
-          var y = payload[Object.getOwnPropertyNames(payload)[f]].Type
-        }
-        // g.map(item=>{
-        if (y !== "items") {
-          var array2 = Object.getOwnPropertyNames(payload);
-          var pp2 = array2.filter(item => item !== 'start_page');
-          var p2 = null;
-          for (var n2 = 0; n2 < pp2.length; n2++) {
-            if (payload[Object.getOwnPropertyNames(payload)[f]].Next === pp2[n2]) {
-              p2 = n2
-            }
-          }
-          t = [{ field: payload[Object.getOwnPropertyNames(payload)[f]].Next, screen: payload[Object.getOwnPropertyNames(payload)[f]].Next, id: p2 }]
-          payload[Object.getOwnPropertyNames(payload)[f]].Next = "";
-        }
-        // if (y !== 'items' && payload[Object.getOwnPropertyNames(payload)[f]].Next === 'end') {
-        //  t= [{ field:'end', screen: 'end', id: 0 }]
-        // }
-        // })
-        var tji='';
-        if (typeof payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.exit_message !== 'undefined' && typeof payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.exit_message!=='undefined'){
-          tji = payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.exit_message;
-        }
-
-
-        var st;
-        var st2;
-        var st3;
-        // if (typeof payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.external != 'undefined' && payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.external != '') {
-          st = payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.external;
-          st2 = payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.url;
-          st3 = payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.method;
-        // } else {
-
-        //   st = false;
-        //   st2 = '';
-        //   st3 = 'get'
-        // }
-     
-      // setInterval(() => {
-      
-      // }, 3000);
-        // console.log(payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.url + "hello55");
-        st2 = payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.url;
-        if (typeof payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.method!='undefined'){
-             var st1 = payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.method.toLowerCase();
-        }
-     
-        console.log(payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.method);
-
-        if (y ==="external"){
-            st=true;
-        }else{
-          st = false;
-        }
-
-           if(y=='external'){
-             st=true
-          y='direct_input';
-        }
-        // console.log(payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.external+'hello');
-        if (payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.url!= '') {
-          st = true;
-        }else{
-          st=false
-        }
-        g.push({
-
-          name: Object.getOwnPropertyNames(payload)[f],
-          type: y,
-          node_items: t,
-          node_options: h,
-          external: st,
-          url: st2,
-          method: payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.method.toLowerCase(),
-          next_screen: payload[Object.getOwnPropertyNames(payload)[f]].Next,
-          short_code: sn,
-          exit_message:tji,
-          screen_text: payload[Object.getOwnPropertyNames(payload)[f]].Text,
-          order: [],
-          show: false
-
-        });
-
-        //     for (var r = 0; payload['start_page'].Items.length > r; r++) {
-        //       var k = payload['start_page'].Items;
-        //   g[k[r].id]['order'] = [1, r + 1];
-        //   g[k[r].id]['show'] = true;
-        //   //////console.log(g[k[r].id])
-        // }
-        form_1 = g;
-        // this.setState({ form_1: g })
-      } else {
-        // this.setState({first_object:})
-        var t4 = [];
-        payload[Object.getOwnPropertyNames(payload)[f]].Items.map((item, t) => {
-          var array = Object.getOwnPropertyNames(payload);
-          array = array.filter(item => item !== 'start_page');
-          for (i = 0; i < array.length; i++) {
-            if (array[i] === item.nextScreen) {
-
-              t4.push({ field: item.displayText, screen: item.nextScreen, id: i })
-
-            }
-          }
-
-        });
-        
-        var h = [];
-        payload[Object.getOwnPropertyNames(payload)[f]].Options.map((item, i) => { h.push(item); });
-        if (payload[Object.getOwnPropertyNames(payload)[f]].Type === 'raw_input' || payload[Object.getOwnPropertyNames(payload)[f]].Type === 'external') {
-          var y = 'direct_input'
-        } else {
-          var y = payload[Object.getOwnPropertyNames(payload)[f]].Type
-        }
-        var kk = [];
-
-        // Object.getOwnPropertyNames(payload).map(item={
-
-        // for (i = 0; i < Object.getOwnPropertyNames(payload).length; i++) {
-
-        //   var tm = Object.getOwnPropertyNames(payload)[i];
-        //   if (tm[i] === payload[Object.getOwnPropertyNames(payload)[f]].Next) {
-        //     kk.push({ field: tm[i], screen: tm[i], id: i });
-        //   }
-        //   // tm
-        // }
-
-        var tji = '';
-        if (typeof payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.exit_message !== 'undefined') {
-          tji = payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.exit_message;
-        }
-        var st;
-        var st2;
-        var st3;
-        // if (typeof payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.external != 'undefined' && payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.external != ''){
-          st = payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.external;
-          st2 = payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.url;
-          if (typeof payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.method != 'undefined') {
-          st3 = payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.method.toLowerCase();
-          }
-        // }else{
-          
-        //   st=false;
-        //   st2='';
-        //     st3='get'
-        // }
-      
-          st2=payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.url;
-        if (y == "external") {
-          st = true;
-        } else {
-          st = false;
-        }
-         if (y == 'external') {
-          y = 'direct_input';
-        }   
-
-        if (payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.url!=""){
-          st=true;
-
-        }else{
-          st = false
-        }
-        var obj = {
-          name: Object.getOwnPropertyNames(payload)[f],
-          type: y,
-          node_items: t4,
-          external:st,
-          node_options: h,
-          url:st2,
-          method: payload[Object.getOwnPropertyNames(payload)[f]].ExtraData.method.toLowerCase(),
-          next_screen: payload[Object.getOwnPropertyNames(payload)[f]].Next,
-          short_code:sn,
-          exit_message: tji,
-          screen_text: payload[Object.getOwnPropertyNames(payload)[f]].Text,
-          show: true
-        };
-        if (obj.type !== 'items' && obj.next_screen !== 'end') {
-          var id = 0;
-          for (i = 0; i < Object.getOwnPropertyNames(payload).length; i++) {
-
-            var tm = Object.getOwnPropertyNames(payload);
-            if (tm[i] === obj.next_screen) {
-              id = i
-            }
-            // if ('end' === obj.next_screen) {
-            //   id = 0
-            // }
-          }
-          obj.node_items = [{ field: obj.next_screen, screen: obj.next_screen, id: id }]
-          obj.next_screen = "";
-        }
-      
-      }
-
-    }
-    // this.setState({ fsfdssfd: obj.node_items});
-    for (var r = 0; obj.node_items.length > r; r++) {
-      // if (typeof k!=='undefined' ){
-      form_1[obj.node_items[r].id]['order'] = [1, r + 1];
-      form_1[obj.node_items[r].id]['show'] = true;
-        // if (typeof form_1[k[r].id] !== 'undefined' ){
-             
-      // if (typeof obj.node_items[obj.node_items.length.length]!=='undefined' && obj.node_items[obj.node_items.length.length].screen!=='end'){
-      if (typeof obj.node_items !== 'undefined' ) { 
-            var k = obj.node_items;
-        if (typeof form_1[k[r].id] !== 'undefined'){
-               form_1[k[r].id]['order'] = [1, r + 1];
-      form_1[k[r].id]['show'] = true;
-        }
- 
-          // }
-      }
-
-      // }
-      // //////console.log(form_1[k[r].id])
-    }
-      if (obj.type !== 'items' && obj.next_screen === 'end') {
-          obj.node_items = [{ field: obj.next_screen, screen: 'end', id: 0 }]
-        obj.next_screen = "";
-        }
-    //  this.setState({ first_object:{
-    //    name: 'Start Screen',
-    //      type: payload.start_page.Type,
-    //   //  node_items:[ { field: payload.start_page.Items[0].displayText, screen: payload.start_page.Items[0].nextScreen}],
-    //      node_options: payload.start_page.Options,
-    //      next_screen: payload.start_page.Next,
-    //      short_code: payload.start_page.shortCode,
-    //      screen_text: payload.start_page.Text
-
-    //  }}) 
-    // var u = [];
-    // u = this.state.form_1;
-
-
-
-    // var k = form_1[0].order
-    // var k2=[];
-    //         // k=k.push(i+1)
-    //         for(var y=0;k.length>y;y++){
-    //           k2.push(k[y])
-    //         }
-    //         //////console.log(k2)
-    for (var d = 0; form_1.length > d; d++) {
-      for (var h = 0; form_1.length > h; h++) {
-
-        if (form_1[h].order.length === d + 2) {
-          //////console.log(form_1[h].order)
-          //////console.log(form_1[h].node_items)
-          // if (form_1[h].next_screen === 'end') {
-          //   form_1[h].node_items=[];
-          // }
-          if (form_1[h].next_screen !== 'end') {
-            form_1[h].node_items.map((item, i) => {
-              // var k=[];
-              var k = form_1[h].order
-              var k2 = [];
-              // k=k.push(i+1)
-              for (var y = 0; k.length > y; y++) {
-                k2.push(k[y])
-              }
-
-              k2.push(i + 1)
-              // //////console.log(k2)
-              if (item.id !== null) {
-
-                form_1[item.id]['order'] = k2
-
-
-                form_1[item.id]['f_id'] = h
-                form_1[item.id]['from'] = form_1[h].order
-                form_1[item.id].show = true
-              }
-
-            })
-          }
-          if (form_1[h].next_screen === 'end') {
-            form_1[h].node_items = [];
-            form_1[h].next_screen = '';
-          }
-          //  //////console.log(form_1[h].node_items[form_1[h].node_items.length-1])
-          // }
-          // for (var b = 0; form_1[h].node_items.length>b;b++){
-
-          // }
-        }
-      }
-    }
-    // this.setState({ form_1: u })
-
-    //     for (var h = 0; form_1.length > h; h++) {
-
-    //       if (form_1[h].order.length===2){
-    //         // alert(form_1[h].order)
-
-    //  var d=1;
-
-    //  for (var v = 0; form_1[h].node_items.length > v; v++) {
-    //    var m = form_1[h].order;
-    // // r.push(e) 
-    //         //   if()
-    //    //////console.log(m)
-    //   //       //////console.log(d)
-    //   //  //////console.log(m.push(d))
-    //   //  m.splice(-1,1)
-    //   //  form_1[form_1[h].node_items[v].id].order = m.push(d) ;
-    //             d++;
-    //         }
-
-
-
-    //       }
-    //     }
-
-    //     var u=0;
-    //     while(u<20){
-    //   for(var g=0;form_1.length>g;g++){
-    //     //////console.log(form_1)
-    //     for (var h = 0; form_1[g]['node_items'].length > h; h++) {
-
-    //       var o = form_1[g]['node_items'];
-    //       // //////console.log(o)
-    //       if (typeof form_1[g].order !== 'undefined' && typeof form_1[o[h].id].order==='undefined'){
-
-    //         var f = form_1[g].order;
-    //         f.push(h + 1)
-    //         // f=f.push((h + 1));
-    //         //////console.log(f)
-    //         form_1[o[h].id].order = f;
-    //         //////console.log(form_1[o[h].id])
-
-    //       }
-
-    //     }
-
-
-    // form_1.map((item,i)=>{
-    //   //////console.log(item.type )
-    //   if (item.type === 'raw_input') {
-    //     form_1[i]['type'] = 'direct_input'
-    //   } 
-
-    // })
-    //   if (obj.type === 'raw_input') {
-    //     obj['type'] = 'direct_input'
-    //   } 
-
-    //   }
-    // u++;
-    // }
-    // form_1.map((item,i)=>{
-    //   if(item.type==='options'){
-    //     form_1[i].node_items=[];
-    //   }
-    // })
-    //////console.log(form_1)
-    //////console.log(obj)
+  sobj = (f,s)=>{
     //////console.log('jello')
-    this.setState({ form_1: form_1 })
-    this.setState({ first_object: obj });
+    this.setState({ form_1: s })
+    this.setState({ first_object: f });
     //     const z=form_1;
     //  setInterval(function v(){
     //   // var m = [];
@@ -542,12 +108,248 @@ class App extends Component {
     // },3000)   
     // this.level_update();
     this.level_update();
-    // this.setState({ loading: false })
-    // this.level_update();
-    //   setInterval(function v(){
-  }catch(e){
-    console.log(e)
+
+    this.fixappear()
+    // this.setState({ l
   }
+  ecov = (obj, form_1) => {
+
+    try {
+      // var payload = load.screens;
+      // var sn=load.serviceCode;
+      //   this.setState({ flow_name:load.name})
+      //   this.setState({ flow_desc: load.description })
+k=[]
+      for (let i = 0; i < form_1.length; i++) {
+        if (form_1[i].name != 'end' && form_1[i].show==true) {
+            k.push(form_1[i]);
+        }
+      }
+    
+      // var g = [];
+      console.log(k)
+      console.log("sdssdsdsd")
+    form_1 =k;
+      var g = []
+      for (let index = 0; index < form_1.length; index++) {
+var n=[]
+        form_1[index].node_items.forEach(element => {
+  if(element!=null){
+    n.push(element)
+  }
+});
+var t=[]
+   for (let index = 0; index < n.length; index++) {
+     
+     for (let i = 0; i < form_1.length; i++) {
+       if (n[index].screen == form_1[i].name && form_1[i].name!='end'){
+         t.push({field: n[index].field, screen: n[index].screen,id:i})
+       }
+      
+    }
+     
+   }
+console.log(t)
+        if (form_1[index].name != 'end' && form_1[index].show==true) {
+          g.push({
+
+            name: form_1[index].name,
+            type: form_1[index].type,
+            node_items: t,
+            node_options: form_1[index].node_options,
+            external: form_1[index].external,
+            url: form_1[index].url,
+            inprop:true,
+            progress: 0,
+            method: form_1[index].method,
+            next_screen: form_1[index].next_screen,
+            //  short_code: form_1[index].short_code,
+            exit_message: form_1[index].exit_message,
+            screen_text: form_1[index].screen_text,
+            order: [],
+            show: form_1[index].show
+
+          });
+        }
+
+      }
+      form_1 = g;
+
+     t= []
+      n = obj.node_items;
+      for (let index = 0; index < n.length; index++) {
+
+        for (let i = 0; i < form_1.length; i++) {
+          if (n[index].screen == form_1[i].name && form_1[i].name != 'end') {
+            t.push({ field: n[index].field, screen: n[index].screen, id: i })
+          }
+
+        }
+
+      }
+      var obj = {
+        name: obj.name,
+        type: obj.type,
+        node_items: t,
+        external: obj.external,
+        node_options: obj.node_options,
+        url: obj.url,
+        inprop: true,
+        progress: 0,
+        method: obj.method,
+        next_screen: obj.next_screen,
+        short_code: obj.short_code,
+        exit_message: obj.exit_message,
+        screen_text: obj.screen_text,
+        show: obj.show
+      };
+
+
+      /////////////////-this///////////////////////////////// 
+      for (var r = 0; obj.node_items.length > r; r++) {
+
+        form_1[obj.node_items[r].id]['order'] = [1, r + 1];
+        form_1[obj.node_items[r].id]['show'] = true;
+
+
+
+        if (typeof obj.node_items !== 'undefined') {
+          var k = obj.node_items;
+          if (typeof form_1[k[r].id] !== 'undefined') {
+            form_1[k[r].id]['order'] = [1, r + 1];
+            form_1[k[r].id]['show'] = true;
+          }
+
+
+        }
+
+
+
+      }
+
+
+      if (obj.type !== 'items' && obj.next_screen === 'end') {
+        obj.node_items = [{ field: obj.next_screen, screen: 'end', id: 0 }]
+        obj.next_screen = "";
+      }
+
+      /////////////////-this///////////////////////////////// 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      /////////////////-this///////////////////////////////// 
+      for (var d = 0; form_1.length > d; d++) {
+        for (var h = 0; form_1.length > h; h++) {
+
+          if (form_1[h].order.length === d + 2) {
+
+
+
+
+
+            if (form_1[h].next_screen !== 'end') {
+              form_1[h].node_items.map((item, i) => {
+
+                var k = form_1[h].order
+                var k2 = [];
+
+                for (var y = 0; k.length > y; y++) {
+                  k2.push(k[y])
+                }
+
+                k2.push(i + 1)
+
+                if (typeof form_1[item.id]!='undefined' && item.id !== null) {
+                  console.log(form_1[item.id])
+                  if (typeof form_1[item.id]['order'] == 'undefined' || form_1[item.id].order.length == 0) {
+                    // if (typeof form_1[item.id].order == 'undefined'){
+                    form_1[item.id]['order'] = k2
+
+
+                    form_1[item.id]['f_id'] = h
+                    form_1[item.id]['from'] = form_1[h].order
+                    form_1[item.id].show = true
+                  }
+
+                  // }
+
+
+
+                }
+
+                //   form_1[i].splice(0, form_1[i].length - 2);
+                // }
+
+              })
+            }
+            console.log("form_1")
+            console.log(form_1)
+            if (form_1[h].next_screen === 'end') {
+              form_1[h].node_items = [];
+              form_1[h].next_screen = '';
+            }
+
+
+
+
+
+          }
+        }
+      }
+      /////////////////-this///////////////////////////////// 
+
+
+
+      // for (var d = form_1.length; d>0; d--) {
+      //   if (typeof form_1[d].from != 'undefined' && typeof form_1[form_1[d].f_id].from != 'undefined'){
+      //     form_1[form_1[d].f_id]['order'] = form_1[d].from;
+      //   }
+
+      // }
+
+      this.level_update();
+      
+      this.setState({ order_count: [1] })
+      this.setState({ form_1: form_1 })
+      this.setState({ first_object: obj });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    } catch (e) {
+      console.log(e)
+    }
   }
   getCodes = async () => {
 
@@ -657,16 +459,66 @@ class App extends Component {
   }
  
  
-
+saveall(){
+  this.props.updateProject(this.state)
+}
   componentDidMount() {
-    document.addEventListener("contextmenu", (event) => {
-      event.preventDefault();
-      this.setState({ xPos: event.pageX + "px"});
-      this.setState({ yPos:event.pageY + "px"}) ;
-      //
-    });
+   
+    // setInterval(() => {
+    //   // this.props.updateProject(this.state)
+    //    console.log(this.props.project)
+    // }, 3000);
+      
+   
+    if (this.props.location.pathname=='/task/tree'){
+      // this.updateScreen(this.props.project)
+       var v={};
+    if (this.props.project!=null){
+      //  this.ecov(this.props.project)
+
+//       for (var f = 0; Object.getOwnPropertyNames(this.props.project).length > f; f++) {
+//         // //////console.log(Object.getOwnPropertyNames(payload)[f])
+        
+//         v[Object.getOwnPropertyNames(this.props.project)[f]]=this.props.project[Object.getOwnPropertyNames(this.props.project)[f]]
+//       console.log(v)
+//       this.setState(v) 
+// v={}
+//       };
+      this.ecov(this.props.project.first_object, this.props.project.form_1)
+      
+//         // 
+    
+    }
+//     var g=this.state.form_1;
+//     var h=[];
+//       this.setState({form_1:[]}) 
+//     setTimeout(() => {
+    
+//       for (let index = 0; index < g.length; index++) {
+//         // const element = array[index];
+// // h.push(g[index])
+//        h = [...this.state.form_1]
+//         h.push(g[index])
+//         this.setState({ form_1: h }) 
+        
+//       }
+//       //  this.level_update()
+//       // console.log(this.props.project)
+//     }, 3000);
+
+   
+      this.setState({mode:'tasktree'})
+    }else{
+      this.setState({ mode: 'timeline' })
+    }
+    // document.addEventListener("contextmenu", (event) => {
+    //   event.preventDefault();
+    //   this.setState({ xPos: event.pageX + "px"});
+    //   this.setState({ yPos:event.pageY + "px"}) ;
+    //   //
+    // });
     // this.ecov({"screens": { "school": { "options": [], "items": [], "next": "end", "text": "enter school", "type": "raw_input", "ExtraData": { "exit_message": "thanks", "url": "", "method": "" } }, "name": { "options": [], "items": [], "next": "end", "text": "enter name", "type": "raw_input", "ExtraData": { "exit_message": "thanks", "url": "", "method": "" } }, "start_page": { "options": [], "items": [{ "displayText": "school", "nextScreen": "school" }, { "displayText": "name", "nextScreen": "name" }], "next": "", "text": "enter name", "type": "items", "ExtraData": { "exit_message": "Thanks", "url": "", "method": "" } } },"serviceCode":"*435#" })
-    this.getCodes();
+    // this.getCodes();
     // this.getToken()
     // console.log(this.props.user)
     // this.props.updateUser(null)
@@ -1028,19 +880,8 @@ url = 'https://flowbuilder-hwo36hymjq2-uc.a.run.app/api/v1/client/flow/create';
 
     }
     let intervalId=setInterval(() => {
-//   console.log(this.state.form_1[this.state.form_1.length - 1])
-    // if (this.state.form_1[this.state.form_1.length - 1].inprop== ){
-    //    let obj =this.state.form_1;
-    // obj[this.state.form_1.length - 1].inprop = false
-    // this.setState({ form_1: obj })
-    // } 
-    
-    // if(this.state.form_1[this.state.form_1.length - 1].inprop !==true ){
-    //  let  obj = this.state.form_1;
-    //   obj[this.state.form_1.length - 1].inprop = true
-    //   this.setState({ form_1: obj })
-    //  
-    // }
+  console.log('interval fix')
+
 this.fixappear();
  clearInterval(intervalId);
 //     }
@@ -1141,7 +982,7 @@ fixappear(){
   updateScreen = (fs) => {
     this.setState({ loading: true })
     //console.log(this.state.form_1)
-    let form_1 = JSON.parse(JSON.stringify(this.state.form_1));
+    let form_1 = JSON.parse(JSON.stringify(fs.form_1));
     var sender = {};
     var error_value = ''
     // console.log(this.state.first_object.short_code.substring(0, 1))
@@ -1282,7 +1123,7 @@ fixappear(){
         }
         if (form_1[i].type !== 'items' && form_1[i].next_screen.trim() === '') {
           //console.log(this.state.form_1[i].node_items);
-          var array = this.state.form_1[i].node_items;
+          var array =fs.form_1[i].node_items;
           array = array.filter(item => item !== '');
           array.map((itm, p) => { if (itm === null) { array[p] = '' } })
           array = array.filter(item => item !== '');
@@ -1341,6 +1182,7 @@ fixappear(){
           "text": form_1[i].screen_text.trim(),
           // "isScreenActive": true,
           "type": ttp,
+          inprop:true,
           "ExtraData": { "exit_message": form_1[i].exit_message, "url": url, method: method},
           // "shortCode": this.state.first_object.short_code.trim()
         }
@@ -1351,7 +1193,7 @@ fixappear(){
     }
 
     var itm = [];
-    var first_object = JSON.parse(JSON.stringify(this.state.first_object));
+    var first_object = JSON.parse(JSON.stringify(fs.first_object));
     if (first_object.node_items === null || typeof first_object.node_items === 'undefined') {
       first_object.node_items = [];
     }
@@ -1524,26 +1366,27 @@ fixappear(){
       // "shortCode": first_object.short_code.trim()
     }
     // var sc="";
-    if(fs=="new"){
-      var sc = first_object.short_code.trim();
-      if (first_object.short_code.trim() == this.state.flowCode){
-  error_value = 'Please change the service code to a new one'
-}
+//     if(fs=="new"){
+//       var sc = first_object.short_code.trim();
+//       if (first_object.short_code.trim() == this.state.flowCode){
+//   error_value = 'Please change the service code to a new one'
+// }
       
-    }else{
-        var  sc = this.state.flowCode;
-    }
-    console.log(first_object.short_code.trim());
-    console.log(this.state.flowCode);
+//     }else{
+//         var  sc = this.state.flowCode;
+//     }
+//     console.log(first_object.short_code.trim());
+//     console.log(this.state.flowCode);
     sender={
       "screens":sender,
       "name":this.state.flow_name,
       "description": this.state.flow_desc,
-      "ServiceCode": sc
+      "ServiceCode": '46564'
 
     }
     console.log(sender)
     console.log(JSON.stringify(sender));
+    this.ecov(sender)
     if (error_value === '') {
       console.log(sender)
       this.setState({ loading: true })
@@ -1556,8 +1399,8 @@ fixappear(){
       // this.setState({ loading: true })
       // console.log(sender)
       // console.log("sender")
-      this.updateFlow(sender,fs)
-      // this.ecov(sender)
+      // this.updateFlow(sender,fs)
+      this.ecov(sender)
       // console.log(sender)
       // console.log(JSON.parse(JSON.stringify(sender)))
       // this.setState({ errorMsg: "Flow saved successfully " })
@@ -1591,7 +1434,7 @@ fixappear(){
     for(var i=0;this.state.form_1.length>i;i++){
 
        for(var f=0;this.state.form_1[i].node_items.length>f;f++){
-         if(typeof this.state.form_1[i].node_items[f]!=='undefined' && typeof this.state.form_1[i].node_items[f].screen!=='undefined' &&this.state.form_1[i].node_items[f].id===id){
+         if (this.state.form_1[i].node_items[f]!=null && typeof this.state.form_1[i].node_items[f]!=='undefined' && typeof this.state.form_1[i].node_items[f].screen!=='undefined' &&this.state.form_1[i].node_items[f].id===id){
            let ids = [...this.state.form_1];   
            ids[i].node_items[f].screen=value;
            this.setState({ form_1: ids });
@@ -1619,11 +1462,11 @@ if(typeof this.state.form_1[g].f_id!=='undefined'  && this.state.form_1[g].show=
    
       if(this.state.form_1[i].show===true){
        
-          console.log( this.state.form_1[i].node_items)
+          // console.log( this.state.form_1[i].node_items)
           for(var f=0;this.state.form_1[i].node_items.length>f;f++){
             
-              console.log( this.state.form_1[i].node_items[f])
-            if(typeof this.state.form_1[i].node_items[f]!=='undefined' && typeof this.state.form_1[i].node_items[f].screen!=='undefined' && this.state.form_1[i].node_items[f].screen===this.state.form_1[g].name){
+              // console.log( this.state.form_1[i].node_items[f])
+            if (this.state.form_1[i].node_items[f]!=null && typeof this.state.form_1[i].node_items[f]!=='undefined' && typeof this.state.form_1[i].node_items[f].screen!=='undefined' && this.state.form_1[i].node_items[f].screen===this.state.form_1[g].name){
         
           //     let ids = [...this.state.form_1];   
           //  ids[g].f_id=i;
@@ -1780,11 +1623,11 @@ var  color2 = 'black'
         // console.log('name 4')
       }
       this.state.form_1[i].node_items.map((itm, j) => {
-        if (typeof this.state.form_1[i].node_items[j] !== 'undefined' && this.state.form_1[i].node_items[j].field.trim() === '') {
+        if (this.state.form_1[i].node_items[j] != null && typeof this.state.form_1[i].node_items[j] !== 'undefined'  && this.state.form_1[i].node_items[j].field.trim() === '') {
           t = true;
           // console.log('name 5')
         }
-        if (typeof this.state.form_1[i].node_items[j] !== 'undefined' && this.state.form_1[i].node_items[j].screen === 'end') {
+        if (this.state.form_1[i].node_items[j] != null && typeof this.state.form_1[i].node_items[j] !== 'undefined' && this.state.form_1[i].node_items[j].screen === 'end') {
           t2 = true;
           // console.log('name 6')
         }
@@ -1898,7 +1741,7 @@ var  color2 = 'black'
         </Submenu>}
         {this.state.form_1[i].type == "items" && this.state.form_1[i].node_items.filter(item => item !== '').filter(item => item !== null).length>0 && <Item onClick={()=>{
           let t = [...this.state.form_1]
-
+console.log(this.state)
 
           if (typeof t[i].colapse === 'undefined') {
 
@@ -1919,6 +1762,10 @@ var  color2 = 'black'
   this.setState({ form_1: obj })
   
         }}>Delete</Item>
+        <Item onClick={() => {
+          this.saveall()
+
+        }}>Save All</Item>
         <Separator />
         <Item >Enable Comment</Item>
         {/* <Item disabled>Comment Color</Item> */}
@@ -2094,7 +1941,7 @@ var  color2 = 'black'
                   position: 'absolute', right: 0, padding: 0, top: 0, margin: 0, zIndex: 10, background: 'white', color: 'white', height: 100, width: 30,
 
                 }}>
-                  <div className='glow_1' style={{ background: '#2E7D32', height: 16, width: 16, borderRadius: 8, margin: 5, marginTop: 10 }}></div>
+                  <div className='glow_2' style={{ background: 'orange', height: 16, width: 16, borderRadius: 8, margin: 5, marginTop: 10 }}></div>
 
 
                 </div>}
@@ -2102,7 +1949,7 @@ var  color2 = 'black'
                    <div style={{
                     position: 'absolute', right: 0, padding: 0, top: 0, margin: 0, zIndex: 10, background: 'white', color: 'white', height: 100, width: 30,
                   }} >
-                  <div className='glow_2' style={{ background: '#FF8F00', height: 16, width: 16, borderRadius: 8, margin: 5, marginTop: 10 }}></div>
+                  <div className='glow_3' style={{ background: '#0039cb', height: 16, width: 16, borderRadius: 8, margin: 5, marginTop: 10 }}></div>
                     </div>} 
                 {this.state.form_1[i].progress == 0 && this.state.form_1[i].type != 'items' &&
                   <div style={{
@@ -2346,8 +2193,9 @@ render() {
     return (
 
       <div className='' style={{ display: 'flex', flexDirection: 'row', height: '100%', overflow: 'hidden', position: 'relative' }}>
-     {/* {console.log(JSON.stringify(this.state))} */}
+     {console.log(this.state)}
         {/* {AuthNav} */}
+        {/* {this.props.updateProject(this.state)} */}
         {/* <ContextMenu menu={() => <CustomMenu>} /> */}
         {/* <div style={{ height: 60, width: '100vw', display: 'flex', flexDirection: 'row', backgroundColor: 'white', zIndex: 1000, position: 'absolute', top: 0, left: 0 }}>
           <div
@@ -2737,7 +2585,7 @@ render() {
           }
 
       </div> }
-        {!this.state.menu && <div onClick={() => { this.setState({ menu: true }) 
+        {/* {!this.state.menu && <div onClick={() => { this.setState({ menu: true }) 
         
          
           this.clearAll();
@@ -2753,9 +2601,9 @@ render() {
             Back
             </Typography>
           </div>
-      }
+      } */}
 
-        {!this.state.menu && <div onClick = {() => {
+        {/* {!this.state.menu && <div onClick = {() => {
         
           window.confirm("Are you sure you wish to  clear all nodes?") &&
             this.clearAll();
@@ -2771,8 +2619,8 @@ render() {
                Clear all
             </Typography>
           </div>
-      }
-        {!this.state.menu && <div onClick={() => { 
+      } */}
+        {/* {!this.state.menu && <div onClick={() => { 
           // this.setState({ errorMsg:"Saving Successfull"})
           // this.setState({ showError:true })
           // this.setState({ showJson: true })
@@ -2810,7 +2658,7 @@ render() {
             </Typography>
 
           }   
-        </div>   }   
+        </div>   }    */}
         {!this.state.menu && this.state.flowState=='update' && <div onClick={() => {
           this.setState({ addflow2: true })   
         }} style={{ cursor: 'pointer', background: '#252B3B', display: "block", textAlign: 'center', width: 60, height: 50, color: 'white', border: '0.0px solid black', borderRadius: 5, fontSize: '11px', margin: 3, position: 'absolute', bottom: 20, right: 100, zIndex: 1000 }} >
@@ -2826,10 +2674,10 @@ render() {
         </div>} 
  
         <div style={{
-         overflow: 'hidden', flex: 1, height: '100vh', width: '100vw', userSelect: "none"
+         overflow: 'hidden', flex: 1, height: this.state.mode=='tasktree'? '80vh':'75vh', width: '100vw', userSelect: "none"
           }}>
 <div style={{
-            position: 'fixed', top: 0, left: 0, height: '100%', filter: 'blur(0px)', overflow: 'scroll', overflowX: 'hidden', 
+            position: 'fixed', top: 0, left: 0,height:'100%', filter: 'blur(0px)', overflow: 'scroll', overflowX: 'hidden', 
   width: '100%',
           display: 'flex',
           justifyContent: 'center',
@@ -2845,7 +2693,7 @@ render() {
 }}>
  
 </div>
-        {this.state.timeline && <div style={{ display: 'flex', flexDirection: 'row', padding: 20, paddingTop: 20, width: '100vw',position:'absolute',top:50,left:0,zIndex:100 }} >
+        {this.state.mode=='timeline' && <div style={{ display: 'flex', flexDirection: 'row', padding: 0, paddingTop: 0, width: '100vw',position:'absolute',top:0,left:0,zIndex:100, }} >
               <CardTab />
             </div>
             }  
@@ -2861,7 +2709,7 @@ render() {
           
           
 
-            {this.state.results && !this.state.timeline &&
+            {this.state.results && this.state.mode!='timeline' &&
             <div style={{ display: 'flex', padding: 10, flexDirection: 'row', height: '100%', width: '100%', }} >
             {/* <LineTo from='start' to='end' orientation='v'/> */}
               {/* 
@@ -2936,7 +2784,7 @@ render() {
 
 
                               this.state.first_object.node_items.map((itm, j) => {
-                                if (typeof this.state.first_object.node_items[j] !== 'undefined' && this.state.first_object.node_items[j].field.trim() === '') {
+                                if (typeof this.state.first_object.node_items[j] !== 'undefined' && typeof this.state.first_object.node_items[j].field!='undefined' && this.state.first_object.node_items[j].field.trim() === '') {
                                   t = true;
                                 }
                                 if (typeof this.state.first_object.node_items[j] !== 'undefined' && this.state.first_object.node_items[j].screen === 'end') {
@@ -3122,7 +2970,7 @@ render() {
               if (t5.length === 0 && this.state.form_1[i].type==='options') {
               }
                                               this.state.form_1[i].node_items.map((itm, j) => {
-                                                if (typeof this.state.form_1[i].node_items[j].field !== 'undefined' && typeof this.state.form_1[i].node_items[j] !== 'undefined' && this.state.form_1[i].node_items[j]!==null && this.state.form_1[i].node_items[j].field.trim()==='' ){
+                                                if (this.state.form_1[i].node_items[j] !==null && typeof this.state.form_1[i].node_items[j].field !== 'undefined' && typeof this.state.form_1[i].node_items[j] !== 'undefined'  && this.state.form_1[i].node_items[j].field.trim()==='' ){
                                                   t = true;
                                                 }
                                                 if (typeof this.state.form_1[i].node_items[j] !== 'undefined' && this.state.form_1[i].node_items[j] !== null && this.state.form_1[i].node_items[j].screen==='end' ){
@@ -3525,7 +3373,7 @@ render() {
                                           {/* let ids2 = [...this.state.form_1];     // create the copy of state array
                                     ids2[i].node_items[j].screen = this.state.form_1[item.id].name;                  //new value
                                     this.setState({ form_1: ids2 }); */}
-
+                                          if (this.state.form_1[i].node_items[j]!=null){
                                           return (<div>
                                             {/* <div>{i+1}. </div> */}
                                             <div style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
@@ -3633,7 +3481,7 @@ render() {
                                                 this.level_update();
                                               }}><CloseIcon /></div>
                                             </div>
-                                          </div>)
+                                          </div>)}
                                         })}
 
                                         <br /></div>)}
@@ -4011,7 +3859,7 @@ render() {
            </div>
         {this.state.sidePane && 
         
-          <div style={{ position: 'fixed', top: 110, right: 20, height: 0, display: this.state.timeline ? 'none':'block'}}>
+          <div style={{ position: 'fixed', top: 110, right: 20, height: 0, display: this.state.mode!='tasktree' ? 'none':'block'}}>
           <Draggable disabled={this.state.drag}>
             <div style={{ borderRadius: 20, overflow: 'hidden', position: 'relative', boxShadow: '0 1px 1.5px 0 rgba(0,0,0,.12), 0 1px 1px 0 rgba(0,0,0,.24)'}}>
             <div style={{  backdropFilter: 'blur(5px)', boxShadow: '0 1px 1.5px 0 rgba(0,0,0,.12), 0 1px 1px 0 rgba(0,0,0,.24)', marginBottom: 0, top: 5, right: 5, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: 'row', alignItems: "flex-end", color: 'white', height: 100, background:'linear-gradient(-45deg, #64b5f6, #f403d1)'}}>
@@ -4548,12 +4396,12 @@ render() {
                             }} displayEmpty style={{ width: 100 }}>
                               <MenuItem value={0} selected>Backlog</MenuItem>
                               <MenuItem value={0} selected>inprogress</MenuItem>
-                              {/* {this.state.form_1.map(item => {
+                              {this.state.form_1.map(item => {
                                 if (item.show === true && item.name !== 'end') {
                                   return (<MenuItem value={item.name} >{item.name}</MenuItem>)
                                 }
                               })}
-                              <MenuItem value='end' selected >end</MenuItem> */}
+                              <MenuItem value='end' selected >end</MenuItem>
 
                             </Select>
                           </div>
@@ -5495,7 +5343,7 @@ render() {
                                             {/* let ids2 = [...this.state.form_1];     // create the copy of state array
                                     ids2[i].node_items[j].screen = this.state.form_1[item.id].name;                  //new value
                                     this.setState({ form_1: ids2 }); */}
-
+                                            if (this.state.form_1[i].node_items[j]!=null){
                                             return (<div>
                                               {/* <div>{i+1}. </div> */}
                                               <div style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
@@ -5628,7 +5476,7 @@ render() {
                                                   this.level_update();
                                                 }}><CloseIcon /></div>
                                               </div>
-                                            </div>)
+                                            </div>)}
                                           })}
                                           
                                          
@@ -5638,7 +5486,7 @@ render() {
                                               var t=false;
                                             
                                               this.state.form_1[i].node_items.map((itm, j) => {
-                                                if (typeof this.state.form_1[i].node_items[j] !== 'undefined' && this.state.form_1[i].node_items[j].screen==='end'){
+                                                if (this.state.form_1[i].node_items[j]!=null && typeof this.state.form_1[i].node_items[j] !== 'undefined' && this.state.form_1[i].node_items[j].screen==='end'){
                                                   t = true;
                                                 }
                                               })
@@ -6147,14 +5995,14 @@ render() {
 /*jshint ignore: end */
   }
 } const mapStateToProps = state => ({
-  token: state.token,
+  project: state.project,
   user: state.user
 
 }) 
 const mapDispatchToProps = dispatch => ({
   updateToken: token => dispatch({ type: 'UPDATE_TOKEN', token: token }),
   updateAuth: status => dispatch({ type: 'UPDATE_AUTH', status: status }),
-  updateUser: user => dispatch({ type: 'UPDATE_USER', user: user })
+  updateProject: project => dispatch({ type: 'UPDATE_PROJECT', project: project })
 }) 
 
-export default App;
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(App));

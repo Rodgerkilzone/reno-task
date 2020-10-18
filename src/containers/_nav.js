@@ -11,18 +11,40 @@ export default [
   },
   {
     _tag: 'CSidebarNavTitle',
-    _children: ['Theme']
+    _children: ['Projects']
   },
   {
     _tag: 'CSidebarNavItem',
-    name: 'Colors',
-    to: '/theme/colors',
+    name: 'My Projects',
+    to: '/projects/myprojects',
     icon: 'cil-drop',
   },
   {
     _tag: 'CSidebarNavItem',
-    name: 'Typography',
-    to: '/theme/typography',
+    name: 'Invited',
+    to: '/projects/invited',
+    icon: 'cil-pencil',
+  },
+  {
+    _tag: 'CSidebarNavTitle',
+    _children: ['Views']
+  },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Task tree',
+    to: '/task/tree',
+    icon: 'cil-drop',
+  },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Cards',
+    to: '/task/cards',
+    icon: 'cil-pencil',
+  },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Timeline',
+    to: '/task/timeline',
     icon: 'cil-pencil',
   },
   {

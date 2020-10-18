@@ -36,6 +36,13 @@ const Colors = React.lazy(() => import('./views/theme/colors/Colors'));
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'));
 const Widgets = React.lazy(() => import('./views/widgets/Widgets'));
 const Users = React.lazy(() => import('./views/users/Users'));
+
+const Timeline = React.lazy(() => import('./views/timeline/example/DragAndDrop'));
+const TaskCreator = React.lazy(() => import('./views/Projects/Project'));
+const MyProjects = React.lazy(() => import('./views/Projects/MyProjects'));
+const Invited = React.lazy(() => import('./views/Projects/Invited'));
+
+
 const User = React.lazy(() => import('./views/users/User'));
 
 const routes = [
@@ -78,6 +85,14 @@ const routes = [
   { path: '/notifications/toaster', name: 'Toaster', component: Toaster },
   { path: '/widgets', name: 'Widgets', component: Widgets },
   { path: '/users', exact: true,  name: 'Users', component: Users },
+
+  { path: '/task/tree', exact: true, name: 'Task Tree', component: TaskCreator },
+  { path: '/task/cards', exact: true, name: 'Cards', component: TaskCreator },
+  { path: '/task/timeline', exact: true, name: 'Timeline', component: Timeline },
+
+  { path: '/projects/myprojects', exact: true, name: 'My Projects', component: MyProjects },
+  { path: '/projects/invited', exact: true, name: 'Invited', component: Invited },
+
   { path: '/users/:id', exact: true, name: 'User Details', component: User }
 ];
 

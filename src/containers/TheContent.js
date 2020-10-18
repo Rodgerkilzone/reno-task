@@ -17,8 +17,8 @@ const loading = (
 
 const TheContent = () => {
   return (
-    <main className="c-main">
-      <CContainer fluid>
+    <main className="c-main" style={{padding:0}}>
+      <CContainer fluid style={{ padding: 0 }}>
         <Suspense fallback={loading}>
           <Switch>
             {routes.map((route, idx) => {

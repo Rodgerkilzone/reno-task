@@ -43,6 +43,7 @@
     "react-animated-modal": "^1.1.1",
     "react-app-polyfill": "^1.0.6",
     "react-beautiful-dnd": "^13.0.0",
+    "react-big-scheduler": "^0.2.7",
     "react-contexify": "^4.1.1",
     "react-dom": "^16.13.1",
     "react-draggable": "^4.4.3",
